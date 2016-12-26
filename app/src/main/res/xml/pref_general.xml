@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditTextPreference
+            android:title="@string/pref_origin_label"
+            android:key="@string/pref_origin_key"
+            android:defaultValue="@string/pref_origin_default"
+            android:inputType="text"
+            android:singleLine="true" />
+
+    <EditTextPreference
+        android:title="@string/pref_destination_label"
+        android:key="@string/pref_destination_key"
+        android:defaultValue="@string/pref_destination_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <EditTextPreference
+        android:title="@string/pref_departureDay_label"
+        android:key="@string/pref_departureDay_key"
+        android:defaultValue="@string/pref_departureDay_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <EditTextPreference
+        android:title="@string/pref_returnDay_label"
+        android:key="@string/pref_returnDay_key"
+        android:defaultValue="@string/pref_returnDay_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <EditTextPreference
+        android:title="@string/pref_numberOfPersons_label"
+        android:key="@string/pref_numberOfPersons_key"
+        android:defaultValue="@string/pref_numberOfPersons_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+
+    <EditTextPreference
+        android:title="@string/pref_nonStop_label"
+        android:key="@string/pref_nonStop_key"
+        android:defaultValue="@string/pref_nonStop_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+
+    <EditTextPreference
+        android:title="@string/pref_maxPrice_label"
+        android:key="@string/pref_maxPrice_key"
+        android:defaultValue="@string/pref_maxPrice_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <EditTextPreference
+        android:title="@string/pref_currency_label"
+        android:key="@string/pref_currency_key"
+        android:defaultValue="@string/pref_currency_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+
+    <EditTextPreference
+        android:title="@string/pref_numOfResults_label"
+        android:key="@string/pref_numOfResults_key"
+        android:defaultValue="@string/pref_numOfResults_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <EditTextPreference
+        android:title="@string/pref_location_label"
+        android:key="@string/pref_location_key"
+        android:defaultValue="@string/pref_location_default"
+        android:inputType="text"
+        android:singleLine="true" />
+
+
+    </PreferenceScreen>

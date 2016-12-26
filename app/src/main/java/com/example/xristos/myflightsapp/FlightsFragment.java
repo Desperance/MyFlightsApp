@@ -1,8 +1,10 @@
 package com.example.xristos.myflightsapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,8 +65,16 @@ public class FlightsFragment extends Fragment {
                                // as you specify a parent activity in AndroidManifest.xml.
                 int id = item.getItemId();
                 if (id == R.id.action_refresh) {
-                    FetchFlightsTask flightsTask = new FetchFlightsTask();
-                    flightsTask.execute("SKG","DUS","2016-12-25","2016-12-28","1","true","400","EUR","10");
+                    /*FetchFlightsTask flightsTask = new FetchFlightsTask();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String origin = prefs.getString(getString(R.string.pref_origin_key),
+                                                getString(R.string.pref_origin_default));
+                    String destination = prefs.getString(getString(R.string.pref_destination_key),
+                            getString(R.string.pref_destination_default));
+                    flightsTask.execute(origin,destination,"2016-12-26","2016-12-28","1","true","800","EUR","10");
+                    return true;*/
+                    updateFlights();
+
                     return true;
                     }
                 return super.onOptionsItemSelected(item);
@@ -76,23 +86,13 @@ public class FlightsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - Error! - 23/18",
-                "Sun 6/29 - Sunny - 20/7"         };
 
-
-        List<String> flights = new ArrayList<String>(Arrays.asList(data));
 
                 mFlightsListAdapter =
                 new ArrayAdapter<String>(
                         getActivity(),
                         R.layout.list_item_flights,
-                        R.id.list_item_flights_textview, flights);
+                        R.id.list_item_flights_textview, new ArrayList<String>());
 
         ListView flightsListView = (ListView) rootView.findViewById(R.id.listview_flights);
         flightsListView.setAdapter(mFlightsListAdapter);
@@ -110,6 +110,43 @@ public class FlightsFragment extends Fragment {
 
         return rootView;
     }
+
+    private void updateFlights(){
+
+        FetchFlightsTask flightsTask = new FetchFlightsTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String origin = prefs.getString(getString(R.string.pref_origin_key),
+                getString(R.string.pref_origin_default));
+        String destination = prefs.getString(getString(R.string.pref_destination_key),
+                getString(R.string.pref_destination_default));
+        String departureDay = prefs.getString(getString(R.string.pref_departureDay_key),
+                getString(R.string.pref_departureDay_default));
+        String returnDay = prefs.getString(getString(R.string.pref_returnDay_key),
+                getString(R.string.pref_returnDay_default));
+
+        String numberOfPersons = prefs.getString(getString(R.string.pref_numberOfPersons_key),
+                getString(R.string.pref_numberOfPersons_default));
+        String nonStop = prefs.getString(getString(R.string.pref_nonStop_key),
+                getString(R.string.pref_nonStop_default));
+        String maxPrice = prefs.getString(getString(R.string.pref_maxPrice_key),
+                getString(R.string.pref_maxPrice_default));
+        String currency = prefs.getString(getString(R.string.pref_currency_key),
+                getString(R.string.pref_currency_default));
+        String numOfResults = prefs.getString(getString(R.string.pref_numOfResults_key),
+                getString(R.string.pref_numOfResults_default));
+
+        flightsTask.execute(origin,destination,departureDay,returnDay,numberOfPersons,nonStop,maxPrice,currency,numOfResults);
+
+
+    }
+
+    public void onStart() {
+
+        super.onStart();
+        updateFlights();
+    }
+
+
     public class FetchFlightsTask extends AsyncTask<String ,Void ,String[]>{
 
         private final String LOG_TAG = FetchFlightsTask.class.getSimpleName();
@@ -167,10 +204,10 @@ public class FlightsFragment extends Fragment {
 
 
 
-                                if (flightsArray.length() < 5)
+                                if (flightsArray.length() < numresults)
                                     numOfResults = flightsArray.length();
                                 else
-                                numOfResults = 5;
+                                numOfResults = numresults;
 
                                 String[] resultStrs = new String[numOfResults];
                                 for(int i = 0; i < numOfResults; i++) {
@@ -270,6 +307,8 @@ public class FlightsFragment extends Fragment {
                                 return null;
                             }
 
+            int maxResults;
+
             // These two need to be declared outside the try/catch
                         // so that they can be closed in the finally block.
                                 HttpURLConnection urlConnection = null;
@@ -284,6 +323,7 @@ public class FlightsFragment extends Fragment {
                                 String myApiKey = "xszkIpGFqbZwxGN7U7VHhf5qLadaCwtz";
 
                                 try {
+                                    maxResults = Integer.parseInt(params[8]) ;
                                 // Construct the URL for the OpenWeatherMap query
                                         // Possible parameters are avaiable at OWM's forecast API page, at
                                                 // http://openweathermap.org/API#forecast
@@ -352,6 +392,7 @@ public class FlightsFragment extends Fragment {
 
                             } catch (IOException e) {
                                 Log.e(LOG_TAG, "Error ", e);
+                                    return null;
                                 // If the code didn't successfully get the weather data, there's no point in attemping
                                         // to parse it.+                return null;
 
@@ -369,7 +410,7 @@ public class FlightsFragment extends Fragment {
                             }
 
                             try {
-                                return getFlightsDataFromJson(flightsJsonStr, 10);
+                                return getFlightsDataFromJson(flightsJsonStr, maxResults);
                             } catch (JSONException e) {
                                 Log.e(LOG_TAG, e.getMessage(), e);
                                 e.printStackTrace();
